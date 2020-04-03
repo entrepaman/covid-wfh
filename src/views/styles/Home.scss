@@ -1,0 +1,329 @@
+.cw_home_container {
+    margin-top: 2px;
+    background: #2D3537;
+
+    .cw_header {
+        display: flex;
+        align-items: center;
+        margin-bottom: 2rem;
+        padding: 10px;
+
+        p {
+            color: #fff;
+        }
+
+        p.cw_app_name {
+            flex-grow: 1;
+            color: #F29018;
+            font-weight: bold;
+            font-size: 1.4rem;
+        }
+    }
+}
+
+.cw_summary_cards_container {
+    display: flex;
+    align-items: center;
+    justify-content: space-evenly;
+
+    > div {
+        width: 14%;
+        border-radius: 10px;
+        padding: 10px 21px 0 14px;
+        transition: all 300ms linear;
+
+        p {
+            font-size: 3rem;
+            font-weight: bold;
+            text-align: right;
+        }
+
+        p:first-child {
+            font-size: 1rem;
+            text-align: left;
+            margin-bottom: 1rem;
+        }
+    }
+
+    .confirmed {
+        background-color: #63a4ff;
+        background-image: linear-gradient(315deg, #63a4ff 0%, #83eaf1 74%);
+    }
+
+    .deaths {
+        background-color: #2f4353;
+        background-image: linear-gradient(315deg, #2f4353 0%, #d2ccc4 74%);
+    }
+
+    .recovered {
+        background-color: #00b712;
+        background-image: linear-gradient(315deg, #00b712 0%, #5aff15 74%);
+    }
+
+    .mortality_rate {
+        background-color: #ee8c68;
+        background-image: linear-gradient(315deg, #ee8c68 0%, #eb6b9d 74%);
+    }
+}
+
+.cw_table_graphs_container {
+    display: flex;
+    margin-top: 4em;
+    align-items: center;
+    padding-bottom: 4em;
+    justify-content: space-evenly;
+
+    table {
+        width: 80%;
+        border-radius: 10px;
+        background: #404040;
+        transition: all 300ms linear;
+
+        tr:nth-child(2n) {
+            background-color: #202020;
+        }
+
+        td, th {
+            color: #fff;
+        }
+
+        thead {
+            tr {
+                th {
+                    color: #CCCCCC;
+                    cursor: pointer;
+                    font-size: 0.8rem;
+                    padding: 6px 26px;
+                    background: #2D3537;
+
+                    p {
+                        display: flex;
+                        align-items: center;
+
+                        i {
+                            font-size: 1rem;
+                            transition: all 300ms linear;
+                            transform: rotate(90deg);
+                        }
+                    }
+                }
+
+                th:hover {
+                    color: #F29018;
+
+                    i {
+                        transform: rotate(270deg);
+                    }
+                }
+
+                th:first-child {
+                    font-size: 1.3rem;
+                    border-top-left-radius: 10px;
+                }
+
+                th:last-child {
+                    border-top-right-radius: 10px;
+                }
+            }
+        }
+
+        tbody {
+            td {
+                text-align: center;
+                padding: 6px 8px;
+                font-size: 1.2rem;
+
+                input {
+                    width: 92%;
+                    border: none;
+                    font-size: 1rem;
+                    padding: 10px 8px;
+                    background: #ddd;
+                    outline: 1px dotted #eb6b9d;
+                }
+            }
+
+            td.city {
+                text-align: left;
+
+                p {
+                    flex-direction: row;
+                }
+            }
+        }
+
+        td {
+            p {
+                display: flex;
+                flex-direction: column;
+            }
+        }
+
+        td.cw_district_table_cont {
+            text-align: left;
+
+            p {
+                span {
+                    width: 60%;
+                    display: flex;
+                    padding: 4px 0px;
+                    margin-left: 4em;
+
+                    i {
+                        width: 300px;
+                    }
+
+                    b.delta {
+                        width: 46px;
+                        color: #63a4ff;
+                        display: inline-block;
+                    }
+                }
+
+                span.header {
+                    i {
+                        font-weight: bold;
+                    }
+                }
+            }
+        }
+    }
+}
+
+.cw_home_container.Light {
+    background-color: #eee;
+
+    p {
+        color: #404040;
+    }
+
+    .cw_header p.cw_app_name {
+        color: #63a4ff;
+    }
+
+    .cw_summary_cards_container {
+        > div {
+            background-image: none;
+
+            p {
+                color: #fff;
+            }
+        }
+
+        .confirmed {
+            background-color: #63a4ff;
+        }
+    
+        .deaths {
+            background-color: #2f4353;
+        }
+    
+        .recovered {
+            background-color: #00b712;
+        }
+    
+        .mortality_rate {
+            background-color: #eb6b9d;
+        }
+    }
+
+    table thead tr th p {
+        color: #fff;
+    }
+
+    table {
+        background: #DDDDDD;
+
+        td {
+            color: #404040;
+        }
+
+        tr:nth-child(2n) {
+            background-color: #f3f3f3;
+        }
+    }
+
+    input {
+        background: #fff;
+    }
+}
+
+@media(max-width: 480px) {
+    .cw_home_container {
+        .cw_header p {
+            width: 20%;
+            font-size: 0.8rem;
+        }
+    }
+    .cw_table_graphs_container {
+        table td.cw_district_table_cont {
+            p {
+                span {
+                    width: 90%;
+                    margin-left: 0;
+
+                    i {
+                        width: 200px;
+                        font-size: 0.9rem;
+                    }
+
+                    i:last-child {
+                        width: 80px;
+                    }
+
+                    b.delta {
+                        width: 24px;
+                    }
+                }
+            }
+        }
+    }
+
+    .cw_table_graphs_container {
+        table {
+            width: 96%;
+
+            thead {
+                tr {
+                    th:first-child {
+                        font-size: 1rem;
+                    }
+
+                    th {
+                        padding: 6px 12px;
+                    }
+                }
+            }
+
+            tbody {
+                td {
+                    font-size: 1rem;
+
+                    input {
+                        font-size: 0.8rem;
+                        padding: 6px 8px;
+                    }
+                }
+            }
+        }
+    }
+
+    .cw_summary_cards_container {
+        align-items: unset;
+
+        > div {
+            width: 22%;
+            padding: 4px;
+
+            p {
+                text-align: center;
+                font-size: 1.5rem;
+            }
+
+            p:first-child {
+                font-size: 0.9rem;
+                text-align: center;
+            }
+        }
+    }
+}

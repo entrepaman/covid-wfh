@@ -1,0 +1,54 @@
+.cw_nav_container {
+    background: #606060;
+    display: flex;
+
+    p {
+        margin: 0;
+        color: #fff;
+        padding: 10px;
+    }
+
+    .cw_logo {
+        flex-grow: 1;
+        font-size: 1.5rem;
+    }
+
+    .cw_selected_lang {
+        display: flex;
+        cursor: pointer;
+        align-items: center;
+
+        span {
+            text-decoration: underline;
+        }
+
+        i {
+            font-size: 1rem;
+            margin-left: 4px;
+        }
+    }
+
+    .cw_theme_change {
+        display: flex;
+        cursor: pointer;
+        align-items: center;
+
+        span {
+            text-decoration: underline;
+        }
+
+        i {
+            font-size: 1rem;
+            margin-left: 4px;
+        }
+    }
+}
+
+.cw_nav_container.Light {
+    background: #fff;
+    box-shadow: 1px 6px 18px #00000030;
+
+    p {
+        color: #404040;
+    }
+}
