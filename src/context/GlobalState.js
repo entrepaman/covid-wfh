@@ -1,5 +1,4 @@
 import React, { createContext, useReducer } from "react";
-import drive from "drive-db";
 import axios from "axios";
 
 import AppReducer from "./AppReducer";
@@ -8,8 +7,7 @@ const initialState = {
     lang: "en",
     translate: {},
     theme: "Light",
-    stateWiseData: {},
-    districtWiseData: {}
+    covid19IndiaData: {}
 }
 
 // Create Context
@@ -32,25 +30,33 @@ export const GlobalProvider = ({ children }) => {
         })
     }
 
-    const fetchData = async ({ sheet, tabs }) => {
-        let data = {};
-        for(let tabsIx = 0; tabsIx < tabs.length; tabsIx++) {
-            const tab = tabs[tabsIx];
-            data[tab.label] = await drive({ sheet, tab: tab.tabName });
-        }
+    const fetchCovid19Data = async (sortedBy) => {
+        const covid19IndiaDataResp = await axios.get("http://localhost:4000/api/v1/get-covid19-data");
+        const covid19IndiaData = covid19IndiaDataResp.data.data;
 
-        dispatch({
-            type: "FETCH_STATEWISE_DATA_FROM_SHEET",
-            stateWiseData: data
-        });
+        sortCovid19IndiaData(covid19IndiaData, sortedBy);
     }
 
-    const fetchDistrictWiseData = async () => {
-        const response = await axios.get('https://api.covid19india.org/state_district_wise.json');
+    const sortCovid19IndiaData = (covid19IndiaData, sortedBy) => {
+        const stateData = [...covid19IndiaData.state];
+        const sortByKey = Object.keys(sortedBy)[0];
+
+        stateData.sort(function(a, b) {
+            const x = sortByKey.toLowerCase();
+
+            if(sortedBy[sortByKey] === "asc") {
+                return a[x] - b[x];
+            } else {
+                return b[x] - a[x];
+            }
+        });
 
         dispatch({
-            type: "FETCH_DISTRICT_WISE_DATA",
-            districtWiseData: response.data
+            type: "FETCH_COVID19_DATA",
+            covid19IndiaData: {
+                ...covid19IndiaData,
+                state: [...stateData]
+            }
         });
     }
 
@@ -59,12 +65,11 @@ export const GlobalProvider = ({ children }) => {
             lang: state.lang,
             theme: state.theme,
             translate: state.translate,
-            stateWiseData: state.stateWiseData,
-            districtWiseData: state.districtWiseData,
+            covid19IndiaData: state.covid19IndiaData,
             updateLang,
-            fetchData,
             updateTheme,
-            fetchDistrictWiseData
+            fetchCovid19Data,
+            sortCovid19IndiaData
         }}>
             {children}
         </GlobalContext.Provider>

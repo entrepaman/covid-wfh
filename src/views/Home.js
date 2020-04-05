@@ -1,48 +1,24 @@
 import React, { useContext, useEffect, useState } from 'react';
-
 import { GlobalContext } from "../context/GlobalState";
-
 import { emptyCheck } from "../utils";
 
 import "./styles/Home.scss";
 
 export const Home = () => {
-    const { theme, fetchData, fetchDistrictWiseData, stateWiseData, districtWiseData } = useContext(GlobalContext);
+    const { theme, covid19IndiaData, fetchCovid19Data, sortCovid19IndiaData } = useContext(GlobalContext);
     const [showDistrictTable, toggleShowDistrictTable] = useState({});
+    const [searchInputVal, updateSearchInputVal] = useState("");
+    const [searchedList, updateSearchedList] = useState([]);
+    const [sortedBy, updateSortedBy] = useState({ Confirmed: "desc" });
 
-    const tabs = [
-        {
-            label: "statewise",
-            tabName: "ovd0hzm"
-        },
-        {
-            label: "timeline",
-            tabName: "o6emnqt"
-        }
-    ];
+    const mobile = ((window.innerWidth > 0) ? window.innerWidth : window.screen.width) <= 480;
 
     useEffect(() => {
-        fetchData({ sheet: "1nzXUdaIWC84QipdVGUKTiCSc5xntBbpMpzLm6Si33zk", tabs });
-        fetchDistrictWiseData();
+        fetchCovid19Data(sortedBy);
         // eslint-disable-next-line
     }, []);
 
-    const stateWise = stateWiseData.statewise;
-
-    let summary = {}
-    if(emptyCheck(stateWise)) {
-        stateWise.map((states) => {
-            if(states.state === "Total") {
-                summary = {
-                    total: states.confirmed,
-                    deaths: states.deaths,
-                    recovered: states.recovered
-                }
-            }
-
-            return null;
-        });
-    }
+    const districtWiseData = emptyCheck(covid19IndiaData.district) ? {...covid19IndiaData.district} : {};
 
     const toggleDistrictTable = (city) => {
         const districtTable = { ...showDistrictTable };
@@ -55,8 +31,52 @@ export const Home = () => {
         toggleShowDistrictTable(districtTable);
     }
 
-    const mobile = ((window.innerWidth > 0) ? window.innerWidth : window.screen.width) <= 480;
-    console.log(mobile)
+    const tableHeaderClicked = (col) => {
+        let newSortedBy = {...sortedBy};
+        if(emptyCheck(sortedBy[col])) {
+            newSortedBy[col] = newSortedBy[col] === "asc" ? "desc" : "asc";
+        } else {
+            newSortedBy = {};
+            newSortedBy[col] = "desc";
+        }
+
+        sortCovid19IndiaData(covid19IndiaData, newSortedBy);
+        updateSortedBy(newSortedBy);
+    }
+
+    const searchInputChanged = (e) => {
+        const value = e.target.value;
+        updateSearchInputVal(value);
+
+        const stateWise = [...covid19IndiaData.state];
+
+        if(emptyCheck(value)) {
+            const searchedList = stateWise.filter((st) => st.state.toLowerCase().includes(value.toLowerCase()) || st.state === "Total");
+            updateSearchedList(searchedList);
+        } else {
+            updateSearchedList([]);
+        }
+    }
+
+    const stateWise = searchedList.length > 0 ? searchedList : emptyCheck(covid19IndiaData.state) && covid19IndiaData.state.length > 0 ? [...covid19IndiaData.state] : [];
+
+    let summary = {}
+    if(emptyCheck(stateWise)) {
+        stateWise.map((states) => {
+            if(states.state === "Total") {
+                summary = {
+                    total: states.confirmed,
+                    deaths: states.deaths,
+                    recovered: states.recovered,
+                    deltaconfirmed: states.deltaconfirmed,
+                    deltadeaths: states.deltadeaths,
+                    deltarecovered: states.deltarecovered,
+                }
+            }
+
+            return null;
+        });
+    }
 
     return (
         <div className={`cw_home_container ${theme}`}>
@@ -74,6 +94,11 @@ export const Home = () => {
                         ? <p>{summary.total}</p>
                         : null
                     }
+                    {
+                        emptyCheck(summary.deltaconfirmed)
+                        ? <p className="delta_p">+{summary.deltaconfirmed}</p>
+                        : null
+                    }
                 </div>
                 <div className="deaths">
                     <p>Deaths</p>
@@ -82,12 +107,22 @@ export const Home = () => {
                         ? <p>{summary.deaths}</p>
                         : null
                     }
+                    {
+                        emptyCheck(summary.deltadeaths)
+                        ? <p className="delta_p">+{summary.deltadeaths}</p>
+                        : null
+                    }
                 </div>
                 <div className="recovered">
                     <p>Recovered</p>
                     {
                         emptyCheck(summary.total)
                         ? <p>{summary.recovered}</p>
+                        : null
+                    }
+                    {
+                        emptyCheck(summary.deltarecovered)
+                        ? <p className="delta_p">+{summary.deltarecovered}</p>
                         : null
                     }
                 </div>
@@ -107,29 +142,50 @@ export const Home = () => {
                         <table>
                             <thead>
                                 <tr>
-                                    <th>
+                                    <th className="not_hover">
                                         <p>
                                             <span>States</span>
-                                            <i className="material-icons">compare_arrows</i>
                                         </p>
                                     </th>
-                                    <th>
-                                        <p>
+                                    <th onClick={() => tableHeaderClicked("Confirmed")}>
+                                        <p className={`${emptyCheck(sortedBy.Confirmed) ? "selected" : ""}`}>
                                             <span>{ mobile ? "C" : "Confirmed" }</span>
-                                            <i className="material-icons">compare_arrows</i>
+                                            <i className={`material-icons ${emptyCheck(sortedBy.Confirmed) ? sortedBy.Confirmed === "asc" ? "asc_selected" : "desc_selected" : ""}`}>
+                                                {
+                                                    emptyCheck(sortedBy.Confirmed)
+                                                    ? "arrow_right_alt"
+                                                    : "swap_vert"
+                                                }
+                                            </i>
                                         </p>
                                     </th>
-                                    <th>
-                                        <p>
+                                    <th onClick={() => tableHeaderClicked("Deaths")}>
+                                        <p className={`${emptyCheck(sortedBy.Deaths) ? "selected" : ""}`}>
                                             <span>{ mobile ? "D" : "Deaths" }</span>
-                                            <i className="material-icons">compare_arrows</i>
+                                            <i className={`material-icons ${emptyCheck(sortedBy.Deaths) ? sortedBy.Deaths === "asc" ? "asc_selected" : "desc_selected" : ""}`}>
+                                                {
+                                                    emptyCheck(sortedBy.Deaths)
+                                                    ? "arrow_right_alt"
+                                                    : "swap_vert"
+                                                }
+                                            </i>
                                         </p>
                                     </th>
-                                    <th>
-                                        <p><span>{ mobile ? "R" : "Recovered" }</span><i className="material-icons">compare_arrows</i></p></th>
+                                    <th onClick={() => tableHeaderClicked("Recovered")}>
+                                        <p className={`${emptyCheck(sortedBy.Recovered) ? "selected" : ""}`}>
+                                            <span>{ mobile ? "R" : "Recovered" }</span>
+                                            <i className={`material-icons ${emptyCheck(sortedBy.Recovered) ? sortedBy.Recovered === "asc" ? "asc_selected" : "desc_selected" : ""}`}>
+                                                {
+                                                    emptyCheck(sortedBy.Recovered)
+                                                    ? "arrow_right_alt"
+                                                    : "swap_vert"
+                                                }
+                                            </i>
+                                        </p>
+                                    </th>
                                     {
                                         !mobile
-                                        ? <th><p><span>Last Update</span></p></th>
+                                        ? <th className="not_hover"><p><span>Last Update</span></p></th>
                                         : null
                                     }
                                 </tr>
@@ -137,7 +193,11 @@ export const Home = () => {
                             <tbody>
                                 <tr>
                                     <td colSpan="5">
-                                        <input type="text" placeholder="Search City" />
+                                        <input
+                                            type="text"
+                                            value={searchInputVal}
+                                            placeholder="Search State"
+                                            onChange={searchInputChanged} />
                                     </td>
                                 </tr>
                                 {
@@ -169,9 +229,42 @@ export const Home = () => {
                                                                 <span>{states.state}</span>
                                                             </p>
                                                         </td>
-                                                        <td>{states.confirmed}</td>
-                                                        <td>{states.deaths}</td>
-                                                        <td>{states.recovered}</td>
+                                                        <td>
+                                                            <p className="table_td_p">
+                                                                <b className="delta">
+                                                                    {
+                                                                        emptyCheck(states.deltaconfirmed) && states.deltaconfirmed !== 0 && states.deltaconfirmed !== "0"
+                                                                        ? `+${states.deltaconfirmed}`
+                                                                        : ""
+                                                                    }
+                                                                </b>
+                                                                <span>{states.confirmed}</span>
+                                                            </p>
+                                                        </td>
+                                                        <td>
+                                                            <p className="table_td_p">
+                                                                <b className="delta">
+                                                                    {
+                                                                        emptyCheck(states.deltadeaths) && states.deltadeaths !== 0 && states.deltadeaths !== "0"
+                                                                        ? `+${states.deltadeaths}`
+                                                                        : ""
+                                                                    }
+                                                                </b>
+                                                                <span>{states.deaths}</span>
+                                                            </p>
+                                                        </td>
+                                                        <td>
+                                                            <p className="table_td_p">
+                                                                <b className="delta">
+                                                                    {
+                                                                        emptyCheck(states.deltarecovered) && states.deltarecovered !== 0 && states.deltarecovered !== "0"
+                                                                        ? `+${states.deltarecovered}`
+                                                                        : ""
+                                                                    }
+                                                                </b>
+                                                                <span>{states.recovered}</span>
+                                                            </p>
+                                                        </td>
                                                         {
                                                             !mobile
                                                             ? <td>{states.lastupdatedtime}</td>

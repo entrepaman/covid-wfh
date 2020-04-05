@@ -28,6 +28,7 @@
 
     > div {
         width: 14%;
+        position: relative;
         border-radius: 10px;
         padding: 10px 21px 0 14px;
         transition: all 300ms linear;
@@ -43,21 +44,42 @@
             text-align: left;
             margin-bottom: 1rem;
         }
+
+        p.delta_p {
+            left: 0;
+            width: 100%;
+            bottom: -30px;
+            font-size: 1.5rem;
+            position: absolute;
+            text-align: center;
+        }
     }
 
     .confirmed {
         background-color: #63a4ff;
         background-image: linear-gradient(315deg, #63a4ff 0%, #83eaf1 74%);
+
+        p.delta_p {
+            color: #63a4ff !important;
+        }
     }
 
     .deaths {
         background-color: #2f4353;
         background-image: linear-gradient(315deg, #2f4353 0%, #d2ccc4 74%);
+
+        p.delta_p {
+            color: #ccc !important;
+        }
     }
 
     .recovered {
         background-color: #00b712;
         background-image: linear-gradient(315deg, #00b712 0%, #5aff15 74%);
+
+        p.delta_p {
+            color: #00b712 !important;
+        }
     }
 
     .mortality_rate {
@@ -103,16 +125,25 @@
                         i {
                             font-size: 1rem;
                             transition: all 300ms linear;
+                        }
+
+                        i.asc_selected {
+                            transform: rotate(-90deg);
+                        }
+
+                        i.desc_selected {
                             transform: rotate(90deg);
                         }
                     }
+
+                    p.selected {
+                        color: #F29018;
+                    }
                 }
 
-                th:hover {
-                    color: #F29018;
-
-                    i {
-                        transform: rotate(270deg);
+                th:hover:not(.not_hover) {
+                    p {
+                        color: #F29018;
                     }
                 }
 
@@ -159,6 +190,19 @@
             }
         }
 
+        p.table_td_p {
+            display: flex;
+            align-items: center;
+            flex-direction: row;
+        }
+
+        b.delta {
+            width: 46px;
+            color: #63a4ff;
+            font-size: 0.9rem;
+            display: inline-block;
+        }
+
         td.cw_district_table_cont {
             text-align: left;
 
@@ -171,12 +215,6 @@
 
                     i {
                         width: 300px;
-                    }
-
-                    b.delta {
-                        width: 46px;
-                        color: #63a4ff;
-                        display: inline-block;
                     }
                 }
 
@@ -216,6 +254,10 @@
     
         .deaths {
             background-color: #2f4353;
+
+            p.delta_p {
+                color: #2f4353 !important;
+            }
         }
     
         .recovered {
@@ -231,6 +273,10 @@
         color: #fff;
     }
 
+    table thead tr th p.selected {
+        color: #F29018;
+    }
+
     table {
         background: #DDDDDD;
 
@@ -240,6 +286,12 @@
 
         tr:nth-child(2n) {
             background-color: #f3f3f3;
+        }
+
+        th:hover:not(.not_hover) {
+            p {
+                color: #F29018;
+            }
         }
     }
 
@@ -255,7 +307,20 @@
             font-size: 0.8rem;
         }
     }
+
+    .cw_summary_cards_container > div p.delta_p {
+        bottom: -22px;
+        font-size: 1rem;
+    }
+
     .cw_table_graphs_container {
+        table {
+            b.delta {
+                width: 28px;
+                font-size: 0.8rem;
+            }
+        }
+
         table td.cw_district_table_cont {
             p {
                 span {

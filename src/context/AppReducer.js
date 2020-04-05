@@ -5,15 +5,10 @@ export default (state, action) => {
                 ...state,
                 theme: state.theme === "Dark" ? "Light" : "Dark"
             }
-        case "FETCH_DISTRICT_WISE_DATA":
+        case "FETCH_COVID19_DATA":
             return {
                 ...state,
-                districtWiseData: action.districtWiseData
-            }
-        case "FETCH_STATEWISE_DATA_FROM_SHEET":
-            return {
-                ...state,
-                stateWiseData: action.stateWiseData
+                covid19IndiaData: action.covid19IndiaData
             }
         default:
             return state;
